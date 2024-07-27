@@ -1,0 +1,80 @@
+import { useState } from 'react'
+import {FaTrashAlt} from 'react-icons/fa'
+// import './index.css'
+
+
+const Content = () => {
+
+    const [items, setItems] = useState([
+        {
+            id: 1,
+            checked: true,
+            item: "One half pound bag of Coca Covered"
+        },
+        {
+            id: 2,
+            checked: false,
+            item: "Item 2"
+        },
+        {
+            id: 3,
+            checked: false,
+            item: "Item 3"
+        }
+    ])
+
+    const handleCheck = (id) => {
+        // below like of code is to convert a tick to untick when handleCheck is invoked or viceversa.
+        // here the above prop 'id' checked whether the invoked id is same or not. If it is same. The '!item.checked' converts to opposite of its value. 
+
+        // If true, it creates a new object with the spread (...) operator, copying all properties of the current item, but toggling the checked property to its opposite value using 
+        const listItems = items.map((item)=>item.id === id? { ...item, checked: !item.checked} : item)
+        setItems(listItems)
+        localStorage.setItem('shoppinglist', JSON.stringify(listItems))
+    }
+    
+    const handleDelete = (id) =>{
+        const listItems = items.filter((item) =>  item.id !==id)
+        setItems(listItems)
+        localStorage.setItem('shoppinglist', JSON.stringify(listItems))
+    }
+
+
+
+    return (
+        <main>
+{/*         each react item in list needs a key attribute. This helpsreact which items have changed which have been added which items have been removed. Always list item needs a key items */}
+            {/* ternary operator is used to check whether the items length. If it is empty is shows "Your List is Empty" or it displays the "List" */}
+            {items.length ? (
+                <ul>
+                    {items.map((item)=>(
+                        <li className="item" key={item.id}>
+                            <input
+                                type='checkbox'
+                                // onChange is used in input tags of HTML. For button tags we use onClick for input tags use onChange
+                                onChange={()=> handleCheck(item.id)}
+                                // below checked is used for ticking the box
+                                // checked attribute is used to checkbox to get tick or not depends on the boolean value of item.che
+                                checked={item.checked}
+                            />
+                            <label
+                                style={(item.checked) ? {textDecoration:'line-through'} : null}
+                                onDoubleClick={()=>{handleCheck(item.id)}}
+                            >{item.item}</label>
+                            <FaTrashAlt 
+                                onClick={()=>handleDelete(item.id)}
+                                role="button" 
+                                tabIndex="0"
+                                />
+                        </li>
+                    ))}
+
+                </ul>
+            ) : (
+                <p style = {{marginTop: '2rem'}}> Your List is Empty</p>
+            )}
+        </main>
+    )
+}
+
+export default Content
